@@ -24,8 +24,8 @@ class Startup {
         this.app.route("/api/v1/news").get(newsController_1.default.get);
         this.app.route("/api/v1/news/:id").get(newsController_1.default.getById);
         this.app.route("/api/v1/news").post(newsController_1.default.create);
-        this.app.route("/api/v1/news/:id").put(newsController_1.default.create);
-        this.app.route("/api/v1/news/:id").delete(newsController_1.default.create);
+        this.app.route("/api/v1/news/:id").put(newsController_1.default.update);
+        this.app.route("/api/v1/news/:id").delete(newsController_1.default.delete);
     }
 }
 exports.default = new Startup();
