@@ -49,7 +49,7 @@ class Startup {
             }
         });
 
-        this.app.use(Auth.validate);
+        //this.app.use(Auth.validate); // Validação do controle de acesso.
 
         //news
         this.app.route("/api/v1/news").get(NewsController.get);
