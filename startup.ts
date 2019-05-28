@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import newsRouter from './router/newsRouter';
 
 import Database from './infra/db';
 import NewsController from './controller/newsController';
@@ -52,11 +53,7 @@ class Startup {
         //this.app.use(Auth.validate); // Validação do controle de acesso.
 
         //news
-        this.app.route("/api/v1/news").get(NewsController.get);
-        this.app.route("/api/v1/news/:id").get(NewsController.getById);
-        this.app.route("/api/v1/news").post(NewsController.create);
-        this.app.route("/api/v1/news/:id").put(NewsController.update);
-        this.app.route("/api/v1/news/:id").delete(NewsController.delete);
+        this.app.use("/", newsRouter);        
     }
 }
 
