@@ -6,6 +6,7 @@ const cors = require("cors");
 const newsRouter_1 = require("./router/newsRouter");
 const db_1 = require("./infra/db");
 const uploads_1 = require("./infra/uploads");
+const compression = require("compression");
 class Startup {
     constructor() {
         this.app = express();
@@ -25,6 +26,7 @@ class Startup {
         this.enableCors();
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(compression());
     }
     routes() {
         this.app.route("/").get((req, res) => {
