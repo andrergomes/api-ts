@@ -5,60 +5,70 @@ import * as redis from 'redis';
 
 class NewsController {
 
-    get(req, res) {
-        let client = redis.createClient(6379,'192.168.99.100');
+    async get(req, res) {
+        try {
+            let client = redis.createClient(6379, '192.168.99.100');
+            await client.get('news', async function (err, reply) {
+                if (reply) {
+                    console.log('redis');
+                    Helper.sendResponse(res, HttpStatus.OK, JSON.parse(reply));
 
-        client.get('news', function (err, reply) {
-            if (reply) {
-                console.log('redis');
-                Helper.sendResponse(res, HttpStatus.OK, JSON.parse(reply));
-
-            } else {
-                console.log('db');
-                
-                NewsService.get()
-                    .then(news => {
-                        client.set('news', JSON.stringify(news));
-                        //client.expire('news', 20);
-                        Helper.sendResponse(res, HttpStatus.OK, news);
-                    })    
-                    .catch(error => console.error.bind(console, `Error ${error}`));
-            }
-        });
-
+                } else {
+                    console.log('db');
+                    let result = NewsService.get();
+                    client.set('news', JSON.stringify(result));
+                    //client.expire('news', 20);
+                    Helper.sendResponse(res, HttpStatus.OK, result);
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    getById(req, res) {
-        const _id = req.params.id;
+    async getById(req, res) {
+        try {
+            const _id = req.params.id;
+            let result = await NewsService.getById(_id)
+            Helper.sendResponse(res, HttpStatus.OK, result);
 
-        NewsService.getById(_id)
-            .then(news => Helper.sendResponse(res, HttpStatus.OK, news))
-            .catch(error => console.error.bind(console, `Error ${error}`));
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    create(req, res) {
-        let news = req.body;
+    async create(req, res) {
+        try {
+            let news = req.body;
+            await NewsService.create(news);
+            Helper.sendResponse(res, HttpStatus.OK, 'Notícia cadastrada com sucesso!');
 
-        NewsService.create(news)
-            .then(news => Helper.sendResponse(res, HttpStatus.OK, "Notícia cadastrada com sucesso!"))
-            .catch(error => console.error.bind(console, `Error ${error}`));
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    update(req, res) {
-        const _id = req.params.id;
-        let news = req.body;
+    async update(req, res) {
+        try {
+            const _id = req.params.id;
+            let news = req.body;
+            await NewsService.update(_id, news);
+            Helper.sendResponse(res, HttpStatus.OK, 'Notícia atualizada com sucesso!');
 
-        NewsService.update(_id, news)
-            .then(news => Helper.sendResponse(res, HttpStatus.OK, 'Notícia atualizada com sucesso!'))
-            .catch(error => console.error.bind(console, `Error ${error}`));
+        } catch (error) {
+            console.error(error);
+        }
     }
 
-    delete(req, res) {
-        const _id = req.params.id;
+    async delete(req, res) {
+        try {
+            const _id = req.params.id;
+            await NewsService.delete(_id)
+            Helper.sendResponse(res, HttpStatus.OK, 'Notícia excluída com sucesso!');
 
-        NewsService.delete(_id)
-            .then(news => Helper.sendResponse(res, HttpStatus.OK, 'Notícia removida com sucesso!'))
-            .catch(error => console.error.bind(console, `Error ${error}`));
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
 
